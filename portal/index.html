@@ -1,0 +1,82 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ThynkDebtTrack - Client Portal</title><link rel="stylesheet" href="../assets/styles.css"></head>
+<body>
+<div id="loginView" class="page-login">
+  <div class="login-wrap">
+    <section class="login-art">
+      <div class="brand"><div class="brand-mark"></div><div><div class="brand-title">ThynkDebtTrack</div><div class="brand-sub">Client Journey Portal</div></div></div>
+      <h1 class="hero-title" style="margin-top:30px">Your debt review journey, <span class="gradient-text">clear and simple.</span></h1>
+      <p class="hero-copy">Use the secure link sent to you by your debt counsellor. The link identifies your invitation, then your ID number confirms the file that belongs to you.</p>
+      <div class="notice info">Demo only: this prototype uses sample data in your browser. The real version will validate the link token and ID securely through Supabase.</div>
+    </section>
+    <section class="card login-card soft">
+      <div class="badge">Secure client access</div>
+      <h1 style="margin-top:14px">Confirm your identity</h1>
+      <p>Enter your South African ID number to open the journey linked to this invitation.</p>
+      <div class="token-box"><div class="small muted" style="margin-bottom:6px">Invitation token</div><div id="tokenLabel" class="token">No token in link</div></div>
+      <form id="loginForm" class="form-row">
+        <label><span class="label">ID number</span><input id="idInput" class="input" inputmode="numeric" autocomplete="off" maxlength="13" placeholder="13-digit ID number"></label>
+        <button class="btn primary" type="submit">Open my journey</button>
+      </form>
+      <div id="loginError" class="notice danger hidden" style="margin-top:14px"></div>
+      <div class="small muted" style="margin-top:16px">Demo link: <strong>?t=demo-sipho-8f13</strong> and ID <strong>8501015000081</strong></div>
+    </section>
+  </div>
+</div>
+
+<div id="dashboardView" class="hidden">
+  <main class="shell">
+    <div class="topbar">
+      <div class="brand"><div class="brand-mark"></div><div><div class="brand-title">ThynkDebtTrack</div><div class="brand-sub">Powered by Thynkverse</div></div></div>
+      <div style="display:flex;gap:8px;align-items:center"><span id="orgBadge" class="badge"></span><button id="logoutBtn" class="btn secondary small">Lock portal</button></div>
+    </div>
+
+    <section class="card soft">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap">
+        <div>
+          <div class="small muted">Welcome back</div>
+          <h1 id="clientName" style="margin:3px 0 8px;font-size:30px;letter-spacing:-.035em"></h1>
+          <div id="currentStage" class="status-pill current"></div>
+        </div>
+        <div style="text-align:right"><div class="small muted">Last updated</div><strong id="lastUpdated" style="font-size:13px"></strong></div>
+      </div>
+    </section>
+
+    <div class="section-head"><div><h2>Your journey</h2><p>Only the status recorded by your debt counsellor is shown here.</p></div></div>
+    <div class="profile-grid">
+      <section class="card cyan"><div id="timeline" class="timeline"></div></section>
+      <aside style="display:grid;gap:20px;align-content:start">
+        <section class="card">
+          <div class="card-title">My profile</div>
+          <div class="profile-list" id="profileList"></div>
+        </section>
+        <section class="card soft">
+          <div class="card-title">Need help?</div>
+          <div style="font-weight:800;font-size:17px">Talk to your debt counsellor</div>
+          <p class="small muted" style="line-height:1.5">You can contact support or request that your file status be checked. An update request does not change your legal status; it flags your file for the admin team.</p>
+          <div class="action-stack">
+            <button class="btn whatsapp" id="whatsappBtn">WhatsApp support</button>
+            <button class="btn secondary" id="requestBtn">Request an update</button>
+          </div>
+          <div id="requestMsg" class="notice success hidden" style="margin-top:12px"></div>
+        </section>
+      </aside>
+    </div>
+    <div class="footer">ThynkDebtTrack &nbsp;•&nbsp; Powered by Thynkverse</div>
+  </main>
+</div>
+<script src="../assets/data.js"></script>
+<script>
+const $=s=>document.querySelector(s); const params=new URLSearchParams(location.search); let token=params.get('t')||''; let active=null;
+$('#tokenLabel').textContent=token||'No token in link';
+function renderClient(c){active=c; $('#loginView').classList.add('hidden'); $('#dashboardView').classList.remove('hidden'); $('#clientName').textContent=c.fullName; $('#orgBadge').textContent=c.org; $('#currentStage').innerHTML='<span class="dot"></span>'+c.currentStage; $('#lastUpdated').textContent=c.lastUpdated;
+  $('#profileList').innerHTML=[['Reference',c.ref],['ID number',DebtDemo.maskId(c.idNumber)],['Debt counsellor',c.counsellor],['Mobile',c.mobile],['Company',c.org]].map(x=>`<div class="profile-item"><span>${x[0]}</span><span>${x[1]}</span></div>`).join('');
+  $('#timeline').innerHTML=c.journey.map((s,i)=>`<div class="step ${s[1]}"><div class="step-icon">${s[1]==='done'?'✓':s[1]==='current'?'•':i+1}</div><div><div class="step-name">${s[0]}</div><div class="step-copy">${s[3]}</div>${s[2]?`<div class="step-date">${s[2]}</div>`:''}</div></div>`).join('');
+  if(c.updateRequested){$('#requestBtn').disabled=true;$('#requestBtn').textContent='Update already requested';$('#requestMsg').textContent='Your request is already with the admin team.';$('#requestMsg').classList.remove('hidden')} else {$('#requestBtn').disabled=false;$('#requestBtn').textContent='Request an update';$('#requestMsg').classList.add('hidden')}
+}
+$('#loginForm').addEventListener('submit',e=>{e.preventDefault(); const id=$('#idInput').value.trim(); const data=DebtDemo.load(); const c=data.clients.find(x=>x.token===token && x.idNumber===id); if(!c){$('#loginError').textContent='The invitation link and ID number do not match a demo client. Please check the link or ID number.';$('#loginError').classList.remove('hidden');return} $('#loginError').classList.add('hidden'); sessionStorage.setItem('debt_demo_client',c.id); renderClient(c)});
+$('#logoutBtn').onclick=()=>{sessionStorage.removeItem('debt_demo_client');location.reload()};
+$('#requestBtn').onclick=()=>{if(!active)return; const data=DebtDemo.load(); const c=data.clients.find(x=>x.id===active.id); c.updateRequested=true; DebtDemo.save(data); active=c; $('#requestBtn').disabled=true; $('#requestBtn').textContent='Update requested'; $('#requestMsg').textContent='Request sent. Your file is now flagged for the admin team.'; $('#requestMsg').classList.remove('hidden')};
+$('#whatsappBtn').onclick=()=>alert('Demo: this will open the configured WhatsApp support number in the live version.');
+const saved=sessionStorage.getItem('debt_demo_client'); if(saved){const c=DebtDemo.load().clients.find(x=>x.id===saved); if(c)renderClient(c)}
+try{const bc=new BroadcastChannel('thynkdebttrack');bc.onmessage=()=>{if(active){const c=DebtDemo.load().clients.find(x=>x.id===active.id); if(c)renderClient(c)}}}catch(e){}
+</script></body></html>
