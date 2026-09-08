@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="ThynkDebtTrack helps debt review clients follow their journey while debt counsellors manage status updates from a separate secure workspace.">
+  <title>ThynkDebtTrack | Client Journey Platform</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <main class="shell" style="min-height:100vh;display:grid;align-content:center">
+    <div class="topbar" style="margin-bottom:42px">
+      <div class="brand"><div class="brand-mark"></div><div><div class="brand-title">ThynkDebtTrack</div><div class="brand-sub">Powered by Thynkverse</div></div></div>
+      <span class="badge"><span class="dot" style="color:#318a80"></span> Demo platform online</span>
+    </div>
+
+    <section class="card soft" style="padding:clamp(26px,5vw,54px);overflow:hidden;position:relative">
+      <div style="max-width:760px;position:relative;z-index:1">
+        <div class="badge">Debt Review Journey Platform</div>
+        <h1 class="hero-title" style="margin-top:22px;font-size:clamp(38px,7vw,70px)">Know where your file is. <span class="gradient-text">Know what comes next.</span></h1>
+        <p class="hero-copy" style="font-size:16px;margin-top:18px">A simple client journey portal connected to a separate Debt Counsellor workspace. Clients can view progress and request an update while staff manage the journey from their own secure portal.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px">
+          <a class="btn primary" href="portal/?t=demo-sipho-8f13">Client access</a>
+          <a class="btn secondary" href="dc/">Debt Counsellor login</a>
+        </div>
+        <p class="small muted" style="margin-top:16px">This public build is a demonstration only. Do not upload real client information until the Supabase authentication and security layer is connected.</p>
+      </div>
+    </section>
+
+    <div class="launch-grid" style="grid-template-columns:repeat(3,1fr);margin-top:22px">
+      <section class="card cyan"><div class="card-title">For clients</div><h2 style="margin:4px 0 8px">One clear journey</h2><p class="small muted">Secure invitation link, ID verification, profile, current stage, journey history, support and Request Update.</p></section>
+      <section class="card soft"><div class="card-title">For Debt Counsellors</div><h2 style="margin:4px 0 8px">One calm workspace</h2><p class="small muted">Client intake, journey status updates, update-request priority, invitation links and client history.</p></section>
+      <section class="card"><div class="card-title">For Thynkverse</div><h2 style="margin:4px 0 8px">Platform control</h2><p class="small muted">A separate Super Admin exists at a private route for organisation, user and platform controls.</p></section>
+    </div>
+
+    <div class="footer">ThynkDebtTrack • Powered by Thynkverse • Demo environment</div>
+  </main>
+</body>
+</html>
